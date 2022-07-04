@@ -24,15 +24,15 @@
 ### Byte ,Word, Double Word
 
 - Byte: 8개의 인접한 비트 sequence
-+ 2^8=256개의 다른 상태를 표현할 수 있다.
-+ single charcater 저장 가능
-+ memory addressing의 단위
+ 2^8=256개의 다른 상태를 표현할 수 있다.
+ single charcater 저장 가능
+ memory addressing의 단위
 
 - Word: byte 2개 (16 bits)
 + 2^16개의 다른 상태를 표현할 수 있다.
 + 몇 비트 CPU냐에 따라서 processor's word size가 다르다.(32-bit CPU면 32bits)
 
--DWord: Word 2개 (23 bits)
+- DWord: Word 2개 (23 bits)
 + 2^32개의 다른 상태를 표현할 수 있다.
 
 ### Integers
