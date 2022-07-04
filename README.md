@@ -88,5 +88,6 @@ Sign bit가 0이면 나머지는 그대로 해석하고 Sing bit가 1이면 2의
 
 Data Type에 따라 차지하는 메모리 공간이 다르다.(ex) char는 1byte 차지, int는 4byte 차지 ...)
 
+<p align="center">
 ![image5](https://user-images.githubusercontent.com/108641430/177073817-63893b9d-da3c-4404-af52-c456436a7617.png)
-
+</p>
