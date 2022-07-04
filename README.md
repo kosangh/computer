@@ -13,9 +13,7 @@
 
 컴퓨터 시스템에는 다양한 데이터 종류가 있다. (정수, 실수, 이미지 등등)
 
-<p align="center">
-<img width="400" src="사진/image1.png">
-</p>
+![image1](https://user-images.githubusercontent.com/108641430/177073992-66ea2b16-0da6-4192-a30f-9637582291ab.png)
 
 ### Bit
 
@@ -52,9 +50,7 @@
 
 ### Data Type
 
-<p align="center">
-<img width="600" src="image/image2.png">
-</p>
+![image2](https://user-images.githubusercontent.com/108641430/177074008-212da9dd-d281-45cb-8cf5-b61f18c04497.png)
 
 + memory size는 컴파일러에 따라서 다양하다.(64-bit compiler에서는 sizeof(long)이 8이고 32-bit compiler에서는 sizeof(long)이 4이다.)
 
@@ -65,9 +61,7 @@
 - 1 byte는 256개의 다른 상태를 표현할 수 있다.
 - 이 8 bits를 이진수로 해석할 수 있다.
 
-<p align="center">
-<img width="600" src="image/image3.png">
-</p>
+![image3](https://user-images.githubusercontent.com/108641430/177074028-a424beed-d7fe-4041-a8ed-2d4769b8e6f9.png)
 
 #### Signed Types Mapping
 
@@ -80,12 +74,44 @@ MSB(Most Significant Bit)를 부호(0: +, 1: -)로 해석하고 나머지는 이
 
 Sign bit가 0이면 나머지는 그대로 해석하고 Sing bit가 1이면 2의 보수법을 적용한다.
 
-<p align="center">
-<img width="600" src="image/image4.png">
-</p>
+![image4](https://user-images.githubusercontent.com/108641430/177074047-33b6a344-444f-472e-9345-e41ce4ebe44a.png)
 
-#### 여러 bytes에 걸친 Data Types
+### 여러 bytes에 걸친 Data Types
 
 Data Type에 따라 차지하는 메모리 공간이 다르다.(ex) char는 1byte 차지, int는 4byte 차지 ...)
 
 ![image5](https://user-images.githubusercontent.com/108641430/177073817-63893b9d-da3c-4404-af52-c456436a7617.png)
+
+### Byte Ordering
+
+같은 Memory layout이 Endianness에 따라서 다르게 해석된다.
+
+![image6](https://user-images.githubusercontent.com/108641430/177074256-5539bf47-3e28-4721-85d8-26eae4dd63b8.png)
+
+(위의 예에서 Big-Endian은 매우 큰 수로 해석)
+
+#### Checking Endianness
+
+![image7](https://user-images.githubusercontent.com/108641430/177074386-da48a015-3cd8-4101-82ef-69cd323caf91.png)
+
+- Little-Endian 출력: 01 00 00 00
+- Big-Endian 출력: 00 00 00 01
+
+### Integer Overflow and Underflow
+
+- Overflow: Data type의 범위보다 커져서 넘어갈 때 발생한다.
+
+![image](https://user-images.githubusercontent.com/108641430/177074613-4e7748a4-66dc-4ed6-9462-387649f3b6f2.png)
+
+- Underflow: Data type의 범위보다 작아질 때 발생한다.
+
+![image](https://user-images.githubusercontent.com/108641430/177074674-7c7f447f-fee3-4ea8-818e-c187e9b94512.png)
+
+(범위 벗어나지 않게 하는게 매우 중요하다.)
+
+### Hex Code
+
+- 한 byte는 2개의 half byte로 쪼개질 수 있다.
+- 한 half byte는 16진수(0~F)로 표현될 수 있다.
+
+![image](https://user-images.githubusercontent.com/108641430/177075001-f7f94979-68e8-4754-9c04-18f079a83c58.png)
