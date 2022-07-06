@@ -269,7 +269,8 @@ C compiler는 C code를 machine code로 번역한다.
 - 조건부 컴파일
 - Line Control
 
-![image](https://user-images.githubusercontent.com/108641430/177486331-ef7667c2-82c4-4d1f-822e-346ab0d3a617.png)
+![image](https://user-images.githubusercontent.com/108641430/177495652-c338d601-b0bd-43a7-b3e2-56ab35ff0fc1.png)
+
 
 전처리된 C 파일들은 컴파일 이후 사라진다.
 
