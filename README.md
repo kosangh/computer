@@ -178,6 +178,7 @@ Floating-point literals
 ### Characters
 
 컴퓨터는 숫자들만 표현할 수 있다.
+
 그러므로 Characters를 컴퓨터에 가르치는 방법은 글자 하나당 특정한 숫자를 하나씩 일대일대응시킨다.
 
 #### ASCII (American Standard Code for Information Interchange) Code
@@ -216,6 +217,7 @@ ASCII는 한글이나 한자 같은 ASCII characters 이외의 characters를 저
 ### Multimedia Data (음성, 영상, 이미지, ...)
 
 #### A raster image data
+
 이미지 해상도 (x, y)의 색상 코드로 표현되는 sequence of pixels
 
 ![image](https://user-images.githubusercontent.com/108641430/177458760-332c8d19-d88d-487d-9536-87fa316953d1.png)
@@ -223,6 +225,7 @@ ASCII는 한글이나 한자 같은 ASCII characters 이외의 characters를 저
 ##### Color Depth
 
 각 pixel에 bits 숫자를 할당한다.
+
 더 높은 color depth는 더 현실적인 이미지를 표현가능하게 한다. (file size도 커지고 memory도 더 많이 차지한다.)
 
 ![image](https://user-images.githubusercontent.com/108641430/177459027-bafb0f8c-6ca3-437a-b285-d6245edc5100.png)
@@ -236,3 +239,158 @@ ASCII는 한글이나 한자 같은 ASCII characters 이외의 characters를 저
 ![image](https://user-images.githubusercontent.com/108641430/177459202-6a642a81-21f7-4c98-8ec1-419c3ef9cefc.png)
 
 
+## 3. Building and Loading Programs
+
+### Compiler
+
+한 프로그래밍 언어로 쓰여진 컴퓨터 코드를 다른 언어로 번역하는 컴퓨터 프로그램이다. (ex) Python to C compiler)
+
+프로그램을 빌드할 때 사용한다.
+
+C compiler는 C code를 machine code로 번역한다.
+
+![image](https://user-images.githubusercontent.com/108641430/177483920-9f5748c7-c249-4b71-884d-70a2e25ba5d4.png)
+
+가장 유명한 C compilers
++ GNU C Compiler (현재는, GNU Compiler Collection)
++ Clang (based on LLVM(Low Level Virtual Machine))
+
+### Three Steps of Build Process
+
+![image](https://user-images.githubusercontent.com/108641430/177484362-7e222b1b-fc73-4641-8ad7-14d396c34301.png)
+
+.C는 코드 / .H는 헤더 파일
+
+#### Preprocessing(전처리)
+
+- 주석 삭제
+- 헤더 파일을 include
+- 매크로를 풀어서 써줌
+- 조건부 컴파일
+- Line Control
+
+![image](https://user-images.githubusercontent.com/108641430/177486331-ef7667c2-82c4-4d1f-822e-346ab0d3a617.png)
+
+전처리된 C 파일들은 컴파일 이후 사라진다.
+
+#### Compiling
+
+전처리된 C 파일들은 object 파일들로 번역한다.
+
+##### Object file
+
+- CPU-dependent machine languages로 쓰여진다. (intel은 Arm에서 쓰지 못한다.)
+
+- 다른 CPU architectures에서 portable하지 않다. (CPU가 달라지면 다시 해야 한다.)
+
+- instructions와 data를 둘 다 가지고 있다.
+
+Compiler 최적화 options
+
+- 빠른 코드 vs 빠른 컴파일 vs 작은 object files vs ...
+
+#### Linking
+
+Object files(CRT와 libc 포함)를 하나의 executable file로 합친다.
+
++ 각 object file은 다른 object files에 calls와 접근을 가진다.
+
++ 그들 사이의 link가 반드시 만들어져야 한다.
+
+CRT는 main function을 부르는 초기화 코드를 가지고 있다.
+
+Standard C library(libc)는 (printf, scanf, ...)용 object files의 set이다.
+
+![image](https://user-images.githubusercontent.com/108641430/177488281-d5e7b378-9567-4916-8374-ddb307289cd8.png)
+
+#### Executable File
+
+여러 object files에서 link된 instructions와 data
+
+실행될 때, CRT안의 entry function이 OS에 의해 불려진다.
+
+다른 OS들마다 다른 file formats가 있다.
+
++ ELF for Linux
+
++ PE COFF for MS Windows
+
+![image](https://user-images.githubusercontent.com/108641430/177489118-e0d60740-a2cd-46d4-ad6f-5e33daaecc3c.png)
+
+### Program Loading
+
+text와 data segments를 file에서 memory로 복사한다.
+
+초기화되지 않은 global variables를 위해 할당하고 0으로 설정한다.
+
+dynamic memory를 위해 heap을 준비한다.
+
+local variables와 function calls를 위해 stack을 준비한다.
+
+![image](https://user-images.githubusercontent.com/108641430/177490111-91c9e177-dbfd-4763-9dd6-c6da44d6d1c7.png)
+
+#### Progam in Memory
+
+변수들과 함수들이 address space에서 그들 자신의 위치들을 가진다.
+
+#### Text Area
+
+Text area는 프로그램의 instructions를 저장한다. (function, loop, 코드에 박혀있는 숫자들)
+
+![image](https://user-images.githubusercontent.com/108641430/177491011-c8439a59-19f1-4eb1-856d-92bf09646139.png)
+
+#### Data Area
+
+Data area는 초기화된 global variables를 저장한다.
+
+#### BSS Area
+
+BSS area는 초기화되지 않은(초기값이 없는) global variables를 저장한다. 
+
+자동으로 0으로 초기화한다. (모든 비트를 0으로 밀어버린다.)
+
+(executable file엔 없지만 로딩하면서 memory 영역에 들어간다.)
+
+#### Heap Area
+
+Heap area는 역동적으로 자라는 dynamic memory를 저장한다.
+
+malloc() 함수의 memory manager에 의해 관리된다.
+
+memory를 추가적으로 할당 가능하다. 남아있는 힙 공간이 없으면 올라가서 공간을 더 차지한다. (최대 메모리 넘어가면 올라가기만 하고 내려가지는 않는다.)
+
+Heap area를 재사용하기 위해 free를 해주어야 한다.
+
+#### Stack Area
+
+stack area는 local variables를 저장한다.
+
+local variables는 function이 샐행되는 도중에만 존재한다. (미리 memory 잡아놓을 필요가 없고 호출되면 그 때 memory를 잡는다.)
+
+(local에 static을 붙이면 function이 끝나도 남아있기 때문에 BSS에 들어간다.)
+
+##### Stack Frame
+
+Stack은 function이 불려질 때 늘어나고 return될 때 수축한다.
+
+Stack은 정리되지 않는 동안 많은 functions에 의해 재사용된다. (이것이 왜 local variables가 쓰레기값을 가지는 이유이다.)
+
+(local variable들은 Stack을 재사용해야 하기 때문에 초기화를 해줘야 한다.)
+
+![image](https://user-images.githubusercontent.com/108641430/177493883-21def0d1-15fb-4ee1-a41a-ec941f933215.png)
+
+##### Risks on Stack
+
+###### Stack overflow (safety)
+
+Stack이 너무 자라게 되면 dynamic memory area(heap area)가 stack area에 의해 overwrite될 수도 있다.
+
++ 딥하게 중첩된 function calls 사용은 피한다. (ex) 재귀함수)
+
++ 배열들 같은 큰 local variables 사용은 피한다.
+
+###### Stack smashing (security)
+
+return 주소를 이상하게 하는 느낌 
+
+해커들이 buffer overflow 기술들을 사용하여 stack에 악의적인 코드를 넣고 이를 pointing하는 함수의 반환 주소를 덮어쓴다.
