@@ -395,3 +395,195 @@ Stack이 너무 자라게 되면 dynamic memory area(heap area)가 stack area에
 return 주소를 이상하게 하는 느낌 
 
 해커들이 buffer overflow 기술들을 사용하여 stack에 악의적인 코드를 넣고 이를 pointing하는 함수의 반환 주소를 덮어쓴다.
+
+## 4. Processor Architecture (1/2)
+
+### HW Architecture의 종류
+
+#### Microprocessor or CPU
+
+계산만 해줌 (CPU와 Memory가 독립적으로 존재)
+
+![image](https://user-images.githubusercontent.com/108641430/177903997-6a74d45c-9e71-4357-a9c3-65cd575a8ad6.png)
+
+#### Microcontroller or SoC (system-on-a-chip)
+
+CPU + Memory + I/O + ... (한 칩에)
+
+![image](https://user-images.githubusercontent.com/108641430/177904257-588dc751-a59a-4bca-9649-2e2f66831ebe.png)
+
+### ECU HW Architecture
+
+![image](https://user-images.githubusercontent.com/108641430/177904337-f38cae0b-d678-45d3-99fd-cff7fde11b53.png)
+
+### Bus-based Computer Architecture
+
+System Bus
+
+- CPU, Memory, I/O Devices를 연결한다.
+- 버스는 shared medium이다. (연결된 것들을 공통적으로 볼 수 있다.)
+- Bus Bandwidth(데이터 주고 받는 속도) = Bus width X Bus clock speed (ex) 초당 32bits 표현 가능 = 32bits X 초당 1bit)
+- Scoreboard와 비슷하다. (모두가 동시에 볼 수 있고, CPU clocks와 같은 이닝 단위로 동기화된다.(동기화 안하면 서로 엉킨다.))
+
+![image](https://user-images.githubusercontent.com/108641430/177905067-d9dfe8f4-5c27-488c-915b-747fdbdb64e3.png)
+
+(Control Bus엔 Read,write 등 operations / Address Bus엔 주소 / Data Bus엔 Data(값))
+
+### Inside a CPU
+
+CPU는 memory instruction 읽고 그 instruction을 실행한다.
+
+#### PC (Program Counter)
+
+다음 명령의 주소를 가지고 있다. (지금 실행하고 있는 instruction 주소도 가지고 있다.)
+
+(Special-purpose regusters 중 하나)
+
+#### ALU (Arithmetic Logic Unit)
+
+사칙연산과 logic operations(큰가 작은가 등)를 수행한다.
+
+연산 후 연산 결과를 만들어낸다.
+
+#### Registers
+
+CPU architectures가 다르면 register setseh 다르다. (register 수와 naming이 다르다.)
+
+- General-purpose registers
+
+momory 접근에 비해 매우 빠르다. (CPU 안에 있어서)
+
+매우 희소하다 (한정된 수의 registers)
+
+- Special-purpose registers
+
+특별한 기능을 가진 몇몇 CPU registers
+
+Controllers (CPU가 대응해서 작용)
+
+##### Ex
+
+- PC (Program Counter)
+- SP (Stack Pointer)
+
+![image](https://user-images.githubusercontent.com/108641430/177906021-a872c8af-d70e-4e5f-afa7-42c9d7284b4b.png)
+
+### Program Execution
+
+PC를 memory의 시작 instruction 위치에 놓는다.
+
+CPU가 PC에 있는 instruction을 읽고 실행한다.
+
+PC가 자동으로 다음 명령을 읽는다.
+
+![image](https://user-images.githubusercontent.com/108641430/177906620-ac6ef68b-1a86-4a9a-a5b6-3003dad4a7f1.png)
+
+### Processor Architecture
+
+Instruction Set Architecture (ISA)
+
+- CPU가 무엇을 이해하는지 (CPU가 어떤 machine language를 이해하는지)
+
+Microarhitecture
+
+- 어떻게 CPU가 design되었는지
+
+#### Instruction Set Architecture (ISA)
+
+HW와 SW 사이의 상호작용
+
+- Instructions
+- Registers
+- Memory access mode (명령 대상에 따라 매우 다름)
+- Endianness (Little-endian, Big-endian, and Bi-endian(Little, Big 둘 다 사용가능))
+
+![image](https://user-images.githubusercontent.com/108641430/177907936-6d521f29-1c7d-4369-b974-ea4a07747183.png)
+
+다양한 ISA들을 위한 다양한 Compilers
+
+- 같은 C code지만 다른 instructions (어떤 compiler 쓰느냐에 따라)
+- Compiler 개발자는 ISA들을 완벽하게 이해해야 한다.
+- Host computers ISA가 target ISA와 같을 필요가 없다. (Cross compilation)
+
+![image](https://user-images.githubusercontent.com/108641430/177908308-df8f3eb6-f816-47ec-bc90-f64cce15b3eb.png)
+
+##### CISC and RISC
+
+CISC (Complex ISA)
+
+- X86이 전형적인 예이다.
+
+RISC (Reduced ISA)
+
+- ARM과 MIPS가 전형적인 예이다.
+- 새로 만들어진 대부분의 CPU
+
+(기술적으론 RISC 승)
+
+###### CISC와 RISC 비교
+
+![image](https://user-images.githubusercontent.com/108641430/177910237-a07d5c40-eb7d-45fd-9f83-6e065b55a88e.png)
+
+###### Two Memory Access Models
+
+CISC는 Register-memory architecture (memory와 registers에서 작업을 수행할 수 있다.)
+
+RISC는 Load-store architecture (register-register architecture) (오직 registers에서만 작업을 할 수 있다.)
+
+- 3단계 (Load ; Do ; Store)
++ memory에서 registers로 values를 Load
++ registers에서 Do an operation
++ registers에서 memory로 values를 Store
+
+![image](https://user-images.githubusercontent.com/108641430/177910833-96524afa-c703-4fa8-a0f9-94272dbeea8f.png)
+
+( []는 memory dereferencing을 의미한다. (pointer dereferencing처럼))
+
+#### Microarchitecture
+
+CPU 내부가 어떻게 생겼는가
+
+Chip-level Design
+
+- Cache
+- Pipelining
+- Out-of-order execution
+- ...
+
+(같은 언어를 써도 회사마다 다르게 만들 수 있다.)
+
+### Computer Architecture
+
+#### Von Neumann Architecture
+
+![image](https://user-images.githubusercontent.com/108641430/177911019-68c9e379-fa4a-48c4-92d3-9070a81b6208.png)
+
+John Von Neumann의 이름에서 따왔다.
+
+instructions와 Data가 한 메모리에 있다.
+
+instructions와 data에 동시접근이 불가능하다.
+
+CPU와 momory사이에 Bottleneck이 생긴다.
+
+프로그램이 편하고 단순하다.
+
+#### Havad Architecture
+
+![image](https://user-images.githubusercontent.com/108641430/177911230-9665e588-5d22-4462-bc18-eb0ca5b20c1e.png)
+
+Harvard Mark I computer에서 이름을 따왔다.
+
+instructions memory와 data memory가 따로 존재한다.
+
+instructions와 data 동시 접근이 가능하다.
+
+CPU와 memory 사이의 bottleneck이 적다.
+
+bandwidth가 넓어졌다.
+
+- 현대 processors는 통합 메모리를 쓰지만 분리된 instruction과 data cache에 의해 data path와 instructions path가 구분되어 있다. (Von Neumann과 Havard architecture의 combination)
+
+### Program Execution Time
+
+![image](https://user-images.githubusercontent.com/108641430/177911655-19cdf4e9-bafd-49c0-92d2-0a1739bd6d10.png)
