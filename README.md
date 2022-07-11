@@ -1,6 +1,6 @@
 # 컴퓨터구조 및 실시간운영체제
 
-##Contents
+## Contents
 1. Data Representation (1/2)
 2. Data Representation (2/2)
 3. Building and Loading Programs
