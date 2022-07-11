@@ -726,3 +726,92 @@ MIPS (Million Instructions Per Second)
 latency와 throughput이 꼭 같이 가진 않는다. (latency 낮아진다고 throughput이 높아지지 않는다.)
 
 (pipelining해도 latency는 그대로이고 throughput은 좋아진다.)
+
+## 6. Memory Subsystem (1/2)
+
+### Memory Technologies
+
+![image](https://user-images.githubusercontent.com/108641430/178205405-24df2487-d15c-461e-aceb-c15f43b34cde.png)
+
+### RAM (Random Access Memory)
+
+전원 끄면 내용을 유지할 수 없다.
+
+system bus를 통해 byte 주소 주면 접근가능한 Array of bytes이다. (ex) 1GB RAM이면 1, 2, ~ , 1GB째 byte까지 byte가 쭉 일렬로 서 있음)
+
+![image](https://user-images.githubusercontent.com/108641430/178205822-fe1703ed-c459-4b41-9565-8943ddd2e422.png)
+
+#### Two Types of RAM
+
+![image](https://user-images.githubusercontent.com/108641430/178205920-e23124ae-ff93-474e-95e1-3ce6dce70715.png)
+
+### Non-Volatile Memory
+
+Flash Memory (현재)
+- SW 아주 복잡함 (SSD 안에 있다.)
+- Page단위로 읽을 수 있다. (~KB)
+- block단위로 지울 수 있다. (~MB)
+- page를 쓰기 전에 block이 무조건 지워져야 한다. (지우고 거기에 write 가능)
+- Wear-leveling problem (erase 여러번 하면 망가진다. (erase limitation 있음))
+
+![image](https://user-images.githubusercontent.com/108641430/178206818-9d4a621a-8d0b-460f-b357-2f5e073016cf.png)
+
+(둘 다 read가 더 빠름)
+
+### System Bus & Address Space
+
+system bus를 통해 CPU가 보는 가상의 공간
+- n-bit address bus(얼마나 큰 memory 표현할 수 있는가)와 m-bit data bus(한번에 data를 memory에서 얼마나 퍼올 수 있는가) 가정 (대부분 n=m)
+- 0에서 2^n - 1까지 addressable하다. (2^n개 address 표현가능)
+- 각 address에 1byte 존재 (n bits address bus)
+- m bits가 각 cycle마다 한번에 옮겨질 수 있다.
+
+![image](https://user-images.githubusercontent.com/108641430/178208037-70cf7d59-946b-47a2-852d-dd6b9115c996.png)
+
+- Q: n = 32로 가정할 때 address space size는?
+
+![image](https://user-images.githubusercontent.com/108641430/178208317-2ef4fb39-296a-41b4-a3d4-f752a8c3cee5.png)
+
+(32bits system에서 표현할 수 있는 주소체계 공간의 수)
+
+- Q: m = 64이고 100MHz bus frequency를 가정할 때 maximum bus bandwidth는?
+
+m = 64 -> 8byte (Bus width) (한 cycle에 8byte 전송가능) / 100MHz (Bus speed)  ==> 2개 곱해서 800MB/s
+
+### n-bit MCUs
+
+n-bit CPU
+- n-bit address space
+- n-bit data bus
+- n-bit registers와 ALUs
+
+n이 크면 클수록
+
+더 큰 address space
+- 더 큰 memory를 다룰 수 있다.
+- 32-bit CPU는 4GB보다 큰 memory 다룰 수 없다.
+
+더 큰 memory bandwidth
+- n과 선현적으로 증가한다.
+
+더 크고 정확한 숫자들
+
+- 32-bit integer vs 64-bit integer
+- 32-bit float vs 64-bit float
+
+### Address Space와 Memory Size
+
+32-bit system은 4GB address space를 가진다.
+
+address space는 system bus가 만드는 주소 체계이고 memory는 실제 저장공간이다.
+
+(ex) 4MB memory에 4GB address space가 있으면 4GB address space의 4MB만 사용되고 나머지는 비어있다.)
+
+### Memory Map
+
+address space에 memory devices Mapping
+
+Peripherals (I/O devices)도 CPU에 의해 접근 되기 위해 mapping된다.
+
+## 7. Memory Subsystem (2/2)
+
