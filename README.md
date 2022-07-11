@@ -815,3 +815,211 @@ Peripherals (I/O devices)도 CPU에 의해 접근 되기 위해 mapping된다.
 
 ## 7. Memory Subsystem (2/2)
 
+### Timing between CPU and Memory (RAM)
+
+Asynchronous RAM
+- CPU와 RAM이 독립적으로 run (최적화 불가능)
+
+Synchronous RAM
+- CPU와 RAM이 single clock으로 run
+- 서로의 timing을 안다.
+- 최적화, 예측 가능
+
+![image](https://user-images.githubusercontent.com/108641430/178216465-961eef33-700b-410f-8aad-186ca7969835.png)
+
+### Speeds of CPU and RAM
+
+![image](https://user-images.githubusercontent.com/108641430/178216603-13e69c96-0279-4f03-84b4-2b209789f427.png)
+
+(fetch from main memory = Instruction Fetch => 우리가 생각한 pipelining 불가능 (IF 제외 너무 빨리 끝남))
+
+### CPU-RAM Pergormance Gap
+
+RAM latency가 심각한 performance bottleneck이 되었다. (시간이 너무 오래 걸림)
+- instruction fetch
+- Load instruction (data를 RAM에서 가져오기)
+- Store instruction (data를 RAM에다 쓰기)
+
+CPI (Cycles Per Instruction)
+- RAM accesses에 의해 지배될 것이다. (RAM 접근하는데 시간을 많이 써서)
+
+CPU는 RAM의 속도로 실행한다.
+- 100배 느려짐 (RAM이 CPU보다 100배 느림)
+
+![image](https://user-images.githubusercontent.com/108641430/178217436-de89f245-f496-40e8-a1b9-9d2c75bc469a.png)
+
+(시간이 지날수록 Performance gap이 커진다.)
+
+### Locality of Memory Accesses
+
+(CPU-RAM Performance Gap의 해결책)
+
+전형적인 프로그램의 memory access pattern (빨간 부분만 접근)
+
+![image](https://user-images.githubusercontent.com/108641430/178217691-4e20b9de-3085-4aff-a130-c49a306b7888.png)
+
+Temporal Locality
+- 최근에 접근된 위치가 가까운 미래에 다시 접근되는 경향이 있다. (ex) for 안에 i 같이 loop 돌면서 계속 접근)
+
+Spatial Locality
+- 메모리 특정 위치에 접근했는데, 근시일 내에 그 근처도 접근할 확률이 높다. (ex) array index 접근하면 그 다음 array index도 접근)
+
+프로그램이 실제로 메모리 접근하는 부분은 작다.
+
+### Cache 
+
+performance gap, locality 에서 생각
+
+cache 구현할 때 가장 많이 사용되는 건 SRAM
+
+![image](https://user-images.githubusercontent.com/108641430/178218531-dafd9fba-f60e-4126-bffb-c72dd8673a5d.png)
+
+![image](https://user-images.githubusercontent.com/108641430/178218608-e55fae33-63c6-42b2-a194-7b94f39178d4.png)
+
+RAM에 원본이 남아 있고 위로 copy함. RAM, Cache, CPU에 같은 data가 있다.
+
+Speeds of Cache가 매우 빨라서 대부분 pipeline이 memory까기 가지 않고 cache에서 fetch해옴. (ex) fetch from L1 cache memory -> 0.5 nanosec)
+
+#### Basic Cache Operations
+
+CPU는 RAM에서 a word (ex) 4byte - 32bits CPU)를 읽어오려 한다.
+- 그것이 cache 안에 있으면 (Hit) 그것을 읽어온다.
+- 그것이 cache 안에 없으면 (Miss) 그것을 RAM에서 cache에 copy를 한 후 cache에서 그것을 읽어온다.
+ 
+Performance of cache memory
+- Hit Ratio: cache가 hit일 가능성 (요새 computer systems에선 95% 이상이다.) -> 높을 수록 좋음
+- Miss Ratio = 1 - Hit Ratio
+
+cache performance를 향상시키기 위해선 size를 늘리거나 좋은 cache management algorithm을 사용한다. (size는 늘리는데 한계가 있음)
+
+### Cache Management Policies
+
+#### Cache Size & Block Size
+
+![image](https://user-images.githubusercontent.com/108641430/178220613-abbbfdd5-a286-431c-9849-da4b18ac0571.png)
+
+Cache size 
+- cache size 커지면 hit ratio 올라가고 cost가 더 든다.
+- cache size 작아지면 hit ratio 내려가고 cost가 적게 든다.
+- 크면 클수록 좋지만 무작정 올리면 가성비가 떨어진다.
+
+![image](https://user-images.githubusercontent.com/108641430/178220864-3438df66-6a14-499e-9520-92cbd867f16d.png)
+
+Block size (or Line size)
+- 너무 크면 필요 없는 data도 가져와서 효율이 떨어진다.
+- 너무 작으면 spatial locality를 활용할 수 없다.
+- 64 bytes 정도가 적당하다.
+
+#### Basic Cache Organization
+
+![image](https://user-images.githubusercontent.com/108641430/178221192-8dee830a-808e-42fa-a72c-e3de43f0d1de.png)
+
+#### Cache Controller: Data Load to Cache
+
+![image](https://user-images.githubusercontent.com/108641430/178221453-ad246303-62e7-470a-b1db-cd784ae2f536.png)
+
+#### Cache Controller: Hit Check
+
+![image](https://user-images.githubusercontent.com/108641430/178221553-a11ddc48-041e-4dfb-911b-97ab79fa29b9.png)
+
+(Valid 값이 0 (cache에 data 없을 때) or Tag가 일치하지 않으면 => Miss)
+
+#### Placement: Direct Mapped
+
+![image](https://user-images.githubusercontent.com/108641430/178221832-1e124e35-c486-48f5-ae70-94c349960eab.png)
+
+갈 곳이 정해져 있다.
+
+쓰는 곳만 쓴다고 가정하면 나머지는 아예 쓰지 않게 된다. (memory 공간 낭비)
+
+#### Placement: Fully Associative
+
+![image](https://user-images.githubusercontent.com/108641430/178222113-3873ba09-bf6c-4d74-a1d0-2a14c6056871.png)
+
+아무데나 집어넣음
+
+#### Placement: Set Associative
+
+![image](https://user-images.githubusercontent.com/108641430/178222202-e6877ad9-8334-41c1-b44b-687d94d4349c.png)
+
+block이 아닌 set을 지정
+
+현 CPU들 사용
+
+#### Replacement Policy
+
+(빈칸 있으면 빈칸으로 그러나 빈칸 없으면 무엇을 쫓아낼지 결정)
+
+Direct mapped cache
+- Victim block (to be evicted)이 placement policy에 의해 자동으로 결정된다.
+
+Fully or set-associative cache
+- 새로운 block이 victim을 자유롭게 정할 수 있다.
+- 미래를 알면 가장 먼 미래에 접근하게 되는 걸 쫓아내고 그 자리에 들어간다.
+- 하지만 미래를 알 수 없고 과거에 접근했던 것들만 알 수 있다. -> History-based Replacement Algorithm
+
+##### History-based Replacement Algorithms
+
+- Random (아무거나)
+- FIFO (First In First Out)
+- LRU (Least Recently Used) (가장 많이 사용)
+- LFU (Least Frequently Used) (범위를 얼마로 잡느냐에 따라 결과가 달라진다.) (동률 나오면 Random으로 쫓아냄)
+- LRFU (Least Recently/Frequently Used)
+- ...
+
+### Unified or Separated Cache
+
+#### Unified architecture
+
+Data와 instructions가 같은 cache에 있다.
+
+#### Separated architecture (현재)
+
+data와 instuctions cache가 따로 있다.
+
+pipelining에 유리하다.
+
+less flexible (seperation이 견고해서 한 cache만 더 많이 사용될 수 있다.)하고 더 복잡하다.
+
+Havard architecture를 모방했다. (실제 메모리는 하나지만 instruction memory와 data memory로 가는 길이 따로 있다.)
+
+### Write Policy
+
+cache write가 hits면
+- Write-through: cache와 memory를 동시에 update한다.
+- Write-back: cache만 update하고 나중에 그것이 쫓겨날 때 memory에 쓴다. (cache data와 DRAM에 있는 data가 다르다. -> 'dirty'라고 함)
+
+cache write가 misses면
+- Write allocate: missed block을 위해 cache를 할당한다.
+- No-write allocate: cache 접근하지 않고 바로 memory에 쓴다.
+
+Write-back과 write allocate를 같이 쓴다.
+- 더 복잡하지만 더 높은 hit ratio
+- cache를 더 aggresive하게 사용한다.
+- for loop같은 locality 있는게 유리
+ 
+Write-through와 no-write allocate를 같이 쓴다.
+- 더 많은 cache write는 동일한 memory write를 발생시킨다.
+- cache를 거의 쓰지 않는다.
+- 간단하지만 hit ratio가 낮아진다.
+- locality 없는 sequential한거 유리
+
+#### Write Strategies
+
+![image](https://user-images.githubusercontent.com/108641430/178227849-2c9705f0-7655-48ec-99cb-968dd8bc652e.png)
+
+### Multi-level Caches and Memory Hierarchy
+
+![image](https://user-images.githubusercontent.com/108641430/178228003-77c8a99f-85a2-4325-8a90-ab1edab8e5af.png)
+
+### Cache Transparency
+
+Cache operations는 순수한 HW operation이다. 
+
+programs에서 cache조장하는 코드가 한 줄도 없다.
+
+CPU HW에서 알아서 일어난다.
+
+programmable on-chip SRAM을 "Scratchpad Memory" or "SPM"이라고 한다.
+- Programmers가 더 빠른 메모리 위치를 위해 변수들과 함수들을 넣을 수 있다.
+- safety-critical embedded systems에서 종종 사용된다. (cache에 의한 execution time variations를 최소화하기 위해)
