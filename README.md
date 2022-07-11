@@ -587,3 +587,142 @@ bandwidth가 넓어졌다.
 ### Program Execution Time
 
 ![image](https://user-images.githubusercontent.com/108641430/177911655-19cdf4e9-bafd-49c0-92d2-0a1739bd6d10.png)
+
+## 5. Processor Architecture (2/2)
+
+### Moore's Law
+
+24개월마다 CPU안의 transistors 수가 2배가 된다. (transistors를 통해 연산, 늘어날수록 연산이 빨라진다.)
+
+- transistor
+
+저마늄, 규소 따위의 반도체를 이용하여 전자 신호 및 전력을 증폭하거나 스위칭하는 데 사용되는 반도체소자이다. 세 개 이상의 전극이 있다.
+
+### From Transistors to CPU
+
+![image](https://user-images.githubusercontent.com/108641430/178199581-02e71247-0fb7-49cd-b2f3-1a9e0f9b2b6c.png)
+
+### Simple CPU with Single Cycle Datapath
+
+![image](https://user-images.githubusercontent.com/108641430/178199688-611bb991-1bcb-4f7c-a291-a634599d5060.png)
+
+### 5 Stages of Datapath
+
+![image](https://user-images.githubusercontent.com/108641430/178199900-9a59afa7-10ca-457b-bb64-a35ea30a0c9a.png)
+
+IF (Instruction Fetch)
+- PC에서 instruction을 읽는다.
+- PC += 4 (4-byte RISC instruction 가정) -> 다음 instruction 실행
+
+ID (Instruction Decode)
+- instruction을 이해한다.
+- registers를 읽는다.
+
+EX (Execute)
+- operation을 수행한다.
+- Arithmetic/Logical Operations
+
+MEM (Memory Access)
+- memory에서 Load하거나 memory에 저장한다.
+
+WB (Write Back)
+- 적절한 registers에 결과를 작성한다.
+
+### Pipelining
+
+Pipelining하면 단위시간당 할 수 있는 총량이 늘어난다. -> bandwidth가 늘어난다.
+
+![image](https://user-images.githubusercontent.com/108641430/178200593-2d96efb8-6ada-450c-b05b-bbb69a12dc41.png)
+
+#### Pipelined Datapath
+
+![image](https://user-images.githubusercontent.com/108641430/178200784-17757278-06e9-4186-a641-6b7a1370860a.png)
+
+- instruction 하나 실행시키는데 5개의 cycle(stage)
+- stage당 걸리는 시간이 같지 않다. (ID가 IF보다 빠름)
+- stage사이에 중간중간 저장을 위해 버퍼를 넣는다.
+
+#### Pipeline Hazards
+
+##### Structural Hazards
+
+HW resouce가 겹칠 수 있다.
+
+Havard architecture가 pipelining 면에서는 더 좋다. (MEM, IF 동시에 가능)
+
+![image](https://user-images.githubusercontent.com/108641430/178201436-9931a47f-56f9-4553-b8d2-b01e4278fa14.png)
+
+memory나 register file에 동시 접근이 불가능하다.
+
+##### Data Hazards
+
+Data 의존성
+
++ 원하지 않는 값의 데이터가 pipelining에 의해서 미리 들어가짐.
+
+RAW (Read After Write), WAR, WAW
+
+![image](https://user-images.githubusercontent.com/108641430/178201967-acc1affb-a6ce-45e2-8492-83050d1d5337.png)
+
+##### Control Hazards
+
+Control 불확실성
+
++ 다음 instruction이 뭔지 모르는 상황이 발생한다.
+
+![image](https://user-images.githubusercontent.com/108641430/178202291-80315c3e-cce5-45e5-b100-8633fc337ece.png)
+
+### Out-Of-Order Execution
+
+runtime에서 insturctions의 싱행 순서를 바꾼다.
+
+![image](https://user-images.githubusercontent.com/108641430/178202671-08fd8b21-0345-4063-8775-11303697be7a.png)
+
+Line 2는 Line 1의 결과에 의존한다. pipelining stalls 가능성이 매우 높다. => instructions 순서를 재배치하여 pipelining stalls 가능성을 낮춘다. 원래 결과와 같은 결과를 출력한다.
+
+### Processor Performance Metrics
+
+#### Latency (execution time)
+
+program 실행하고 끝나는데 걸리는 시간
+
+program 관점이다.
+
+낮을수록 좋다.
+
+##### Execution Time (seconds / program)
+
+Seconds / cycle (사이클당 몇초가 걸리는가) (ex) 1Hz CPU -> 1, 10Hz CPU -> 0.1)
+
+- Higher CPU clock frequency (더 이상 불가능)
+- Energy 소비와 열 문제
+- Multicore CPU가 더 많은 CPU cycles(CPU clock cycle)을 제공할 수 있다.
+
+Cycles / instruction
+
+- instruction 복잡도
+- CISC CPU가 instuction 복잡도가 더 크다. (RISC가 유리)
+
+instructions / program
+
+- RISC compiler가 주어진 program에서 더 많은 instructions를 만든다. (CISC가 유리)
+
+![image](https://user-images.githubusercontent.com/108641430/178204174-b08e48e4-d07d-414c-a75d-af2f3be16a84.png)
+
+#### Throughput (bandwidth)
+
+특정 시간에 실행 시킬수 있는 programs의 수
+
+system의 관점이다.
+
+높을수록 좋다.
+
+MIPS (Million Instructions Per Second)
+- 초당 CPU가 얼마나 많은 instructions를 실행시킬 수 있는지
+- 과거엔 중요했으나 요새는 그렇게 중요하지는 않다.
+
+![image](https://user-images.githubusercontent.com/108641430/178204766-18c95405-248a-42d9-ad35-8fd261978ae4.png)
+
+latency와 throughput이 꼭 같이 가진 않는다. (latency 낮아진다고 throughput이 높아지지 않는다.)
+
+(pipelining해도 latency는 그대로이고 throughput은 좋아진다.)
